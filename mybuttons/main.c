@@ -1,0 +1,65 @@
+#include <libpynq.h>
+#include <stdio.h>
+
+int validateInput(int input) {
+    if (input < 0) {
+        printf("the number must be positive \n");
+        printf("enter a number? \n");
+        scanf("%d", &input);
+        validateInput(input);
+    }
+    return input;
+}
+
+int main(void) {
+    pynq_init();
+    leds_init_onoff();
+    buttons_init();
+
+    int button;
+    int counter;
+    int value; // storage variable, holds previous value of counter
+
+    printf("enter a number? "); // nice ? at the end
+    int input;
+    scanf("%d", &input);
+    counter = validateInput(input);  // renaming input to counter for readabilty purposes
+
+    // Turn the right LED on before button presses
+    counter = (counter + NUM_BUTTONS) % (NUM_BUTTONS);
+    green_led_on(counter);
+    sleep_msec(100);
+
+    while(1) {
+        button = wait_until_any_button_pushed();
+        wait_until_button_released(button);
+        sleep_msec(100);
+
+        if (button == 0 || button == 1) {
+        
+            // Turn off all LEDS
+            for (int i = 0; i < NUM_BUTTONS; i++) {
+                green_led_off(i);
+            }
+
+        }
+        
+
+        if (button == 0) {
+            value = counter;
+            counter = (counter+1 + NUM_BUTTONS) % (NUM_BUTTONS);
+            green_led_on(counter);
+            printf("%d+1 = %d \n", value, counter);
+        } else if (button == 1) {
+            value = counter;
+            counter = (counter-1 + NUM_BUTTONS) % (NUM_BUTTONS);
+            green_led_on(counter);
+            printf("%d-1 = %d \n", value, counter);
+        }   
+    }
+    
+    buttons_destroy();
+    leds_destroy();
+    pynq_destroy();
+    return EXIT_SUCCESS;
+}

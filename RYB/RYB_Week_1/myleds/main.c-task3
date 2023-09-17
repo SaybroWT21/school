@@ -1,0 +1,14 @@
+#include <libpynq.h>
+
+int main(void) {
+    pynq_init();
+    leds_init_onoff();
+
+    green_led_onoff(0, LED_ON);
+    sleep_msec(3000);
+    green_led_onoff(0, LED_OFF);
+
+    leds_destroy();
+    pynq_destroy();
+    return EXIT_SUCCESS;
+}

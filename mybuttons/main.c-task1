@@ -1,0 +1,21 @@
+#include <libpynq.h>
+#include <stdio.h>
+
+int main(void) {
+    pynq_init();
+    leds_init_onoff();
+    buttons_init();
+    
+    printf("push button 0 \n");
+    int state_button_0 = get_button_state(0);
+    if (state_button_0 == BUTTON_PUSHED) { 
+        printf("button 0 is pushed");
+    } else {
+        printf("button 0 is not pushed");
+    }
+    
+    buttons_destroy();
+    leds_destroy();
+    pynq_destroy();
+    return EXIT_SUCCESS;
+}
